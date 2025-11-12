@@ -44,12 +44,23 @@ if __name__ == "__main__":
     hack_cesar_cipher(cyphered_text, alphabet=string.printable)
 
 
-def vigenere (code, key):
-  crypted = ''
-  length = len(key)
-  for element, char in enumerate(code):
-    crypted += chr((ord(char) + ord(key[element % length])) % 1114111)
-  return crypted
+def vigenere_cipher (text, password):
+    list_of_keys=[ord(char) for char in password]
+  crypted_text = []
+  length = len(list_of_keys)
+  for index, char in enumerate(text):
+    current_key= list_of_keys[index % length]
+    crypted_text.append(chr((ord(char) + current_key) % 1114111))
+  return "".join(crypted_text)
 
-vigenere ('animal', 'cat')
+def vigenere_decipher(text, password):
+    key_values = [ord(char) for char in password]
+    decrypted_chars = []
+    key_length = len(key_values)
+
+    for index, char in enumerate(text):
+        current_key = key_values[index % key_length]
+        decrypted_chars.append(chr((ord(char) - current_key) % 1114111))
+
+    return "".join(decrypted_chars)
 
