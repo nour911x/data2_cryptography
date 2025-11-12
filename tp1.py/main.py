@@ -44,19 +44,12 @@ if __name__ == "__main__":
     hack_cesar_cipher(cyphered_text, alphabet=string.printable)
 
 
-def vigenere_cipher(text, key):
-    import string
-    alphabet = string.ascii_lowercase
-    text = text.lower()
-    key = key.lower()
-    result = ""
-    key_index = 0
+def vigenere (code, key):
+  crypted = ''
+  length = len(key)
+  for element, char in enumerate(code):
+    crypted += chr((ord(char) + ord(key[element % length])) % 1114111)
+  return crypted
 
-    for char in text:
-        if char in alphabet:
-            shift = alphabet.index(key[key_index % len(key)])
-            result += cesar_cipher(char, shift)
-            key_index += 1
-        else:
-            result += char
-    return result
+vigenere ('animal', 'cat')
+
