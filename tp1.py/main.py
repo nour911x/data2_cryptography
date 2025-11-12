@@ -44,14 +44,6 @@ if __name__ == "__main__":
     hack_cesar_cipher(cyphered_text, alphabet=string.printable)
 
 
-def vigenere_cipher (text, password):
-    list_of_keys=[ord(char) for char in password]
-  crypted_text = []
-  length = len(list_of_keys)
-  for index, char in enumerate(text):
-    current_key= list_of_keys[index % length]
-    crypted_text.append(chr((ord(char) + current_key) % 1114111))
-  return "".join(crypted_text)
 
 def vigenere_decipher(text, password):
     key_values = [ord(char) for char in password]
