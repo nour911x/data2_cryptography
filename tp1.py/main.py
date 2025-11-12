@@ -45,14 +45,22 @@ if __name__ == "__main__":
 
 
 
-def vigenere_decipher(text, password):
-    key_values = [ord(char) for char in password]
-    decrypted_chars = []
-    key_length = len(key_values)
 
-    for index, char in enumerate(text):
-        current_key = key_values[index % key_length]
-        decrypted_chars.append(chr((ord(char) - current_key) % 1114111))
 
-    return "".join(decrypted_chars)
+def vigenere_cipher(text, password):
+	list_of_keys = [ord(char) for char in password]
+	crypted_text = []
+	for index, char in enumerate(text):
+		current_key = list_of_keys[index%len(list_of_keys)]
+		crypted_text.append(cesar_cipher(char,ord(current_key)))
+	return crypted_text
+
+def vigener_uncipher(text, password):
+	original_text = []
+	list_of_keys = [ord(char) for char in password]
+	for index,char in enumerate(text):
+		current_key = list_of_keys[index%len(list_of_keys)]
+		original_text.append( cesar_uncipher(char,ord(current_key)))
+	return original_text
+
 
