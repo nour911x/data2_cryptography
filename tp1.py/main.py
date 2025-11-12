@@ -1,6 +1,7 @@
 import string
 def cesar_cipher(text, shift):
-<<<<<<< HEAD
+    if type(text) == str and type(shift) == int : 
+        return "".join([chr((ord(char) + shift) % 1_1114_112) for char in text])
     cyphered_text = ""
 
     for char in text:
@@ -34,5 +35,4 @@ def hack_cesar_cipher(crypted_message,alphabet):
 
 
 
->>>>>>> 000d7ab (Mise à jour de main.py dans tp1)
 
