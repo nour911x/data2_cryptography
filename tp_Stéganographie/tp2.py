@@ -8,10 +8,10 @@ import numpy as np
 image1 = cv2.imread("C:\\Users\\ThinkPad\\Downloads\\ninjastars.jpg") #imread() lit mon image et la stocke sous forme d’un tableau numPy , chaque pixel contient trois valeurs bleu roige vert
 
 if image1 is None:
-    print("Erreur : impossible de charger l'image")
+    print("erreur")
 else:
-    print(" Image chargée")
-    print(f"  Taille originale : {image1.shape}") # .shape pour obtenir les dimensions de l'image
+    print(" image chargée")
+    print(f"  taille originale : {image1.shape}") #  obtenir les dimensions de l'image
 
     # Nouvelles dimensions
     image_finale = cv2.resize(image1, (800, 600))#resize() pour redimensionner l'image
@@ -19,10 +19,10 @@ else:
     # Convertir en gris
     image_gris = cv2.cvtColor(image_finale, cv2.COLOR_BGR2GRAY)
     # on convertis l’image en gris parce que c plus facile 1 seule valeur par pixel
-    print(f"  Taille finale grise : {image_gris.shape}")
+    print(f"  taille finale grise : {image_gris.shape}")
     
     # Afficher l'image finale
-    cv2.imshow("Image Finale", image_gris)      #imshow() ouvre une fenêtre avec l’image
+    cv2.imshow("image finale", image_gris)      #imshow() ouvre une fenêtre avec l’image
     cv2.waitKey(0)                              #waitKey(0) attend que j'appuie sur une touche.
     cv2.destroyAllWindows()                     #destroyAllWindows() ferme toutes les fenêtres.
 
@@ -38,7 +38,7 @@ def afficher_pixel(image, x, y):
     print(f"Binaire : {valeur_binaire}")
     print(f"LSB : {valeur_binaire[-1]}") #récupère le bit le moins significatif
 
-afficher_pixel(image_gris, 100, 50) #On l’appelle pour voir un pixel
+afficher_pixel(image_gris, 100, 50) 
 
 
 
@@ -55,7 +55,7 @@ def texte_vers_binaire(texte):
 def convertir_pixels_pairs(image):
     image_paire = image.copy()
     image_paire = image_paire & 0xFE #0xFE = 254 (décimal) = 11111110 (binaire) met le dernier bit à 0 et rend la valeur paire
-                
+     #Ça permet d’avoir une base “neutre” pour ensuite mettre à 1 seulement les bits du message.           
     pixels_modifies = np.sum(image != image_paire) # on compare pixel par pixel les deux images ,l'image original et limage paire , Le résultat est un tableau booléen (True / False) / pixels_modifies = le nombre total de pixels qui ont été modifiés pour devenir pairs.
     print(f"\nPixels modifiés : {pixels_modifies} / {image.size}")
     return image_paire
@@ -127,10 +127,10 @@ print("="*70)
 
 # Encodage
 image_paire = convertir_pixels_pairs(image_gris)
-message_original = "Bonjour , voci le mot de passe : xxxZ137yyy !!!"
+message_original = "c'est pas un bug c'est un secret :)\n"
 image_encodee = encoder_message_lsb1(image_paire, message_original)
 cv2.imwrite("image_encodee.png", image_encodee)
-print("\n✓ Image sauvegardée : image_encodee.png")
+print("\n Image sauvegardée : image_encodee.png")
 
 # Décodage
 message_decode = decoder_message_lsb1(image_encodee)
@@ -160,4 +160,4 @@ cv2.imshow("Différence (x100)", difference_affichage)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
-print("\n✓✓✓ EXERCICES 3, 4 ET 5 TERMINÉS AVEC SUCCÈS !")
+print("\n  EXERCICES 3, 4 ET 5 TERMINÉS ")
