@@ -1,35 +1,20 @@
-import cv2
+from PIL import Image
 import numpy as np
 
 # exercises 1 et 2 
 
-
 # Charger l'image
-image1 = cv2.imread("C:\\Users\\ThinkPad\\Downloads\\ninjastars.jpg") #imread() lit mon image et la stocke sous forme d’un tableau numPy , chaque pixel contient trois valeurs bleu roige vert
+image1 = Image.open("C:\\Users\\ThinkPad\\Downloads\\ninjastars.jpg") # lit mon image et la stocke sous forme d’un tableau numPy , chaque pixel contient une seule valeur pour le gris
+image1 = image1.convert("L")  # on convertis l’image en gris parce que c plus facile 1 seule valeur par pixel
 
-if image1 is None:
-    print("erreur")
-else:
-    print(" image chargée")
-    print(f"  taille originale : {image1.shape}") #  obtenir les dimensions de l'image
+print(f"Taille image : {image1.size}") # .size pour obtenir les dimensions de l'image
+image1.show()  # affiche l'image
 
-    # Nouvelles dimensions
-    image_finale = cv2.resize(image1, (800, 600))#resize() pour redimensionner l'image
-    
-    # Convertir en gris
-    image_gris = cv2.cvtColor(image_finale, cv2.COLOR_BGR2GRAY)
-    # on convertis l’image en gris parce que c plus facile 1 seule valeur par pixel
-    print(f"  taille finale grise : {image_gris.shape}")
-    
-    # Afficher l'image finale
-    cv2.imshow("image finale", image_gris)      #imshow() ouvre une fenêtre avec l’image
-    cv2.waitKey(0)                              #waitKey(0) attend que j'appuie sur une touche.
-    cv2.destroyAllWindows()                     #destroyAllWindows() ferme toutes les fenêtres.
-
-
+# Convertir en tableau numpy pour manipuler les pixels
+image_np = np.array(image1)
+print(f"Taille tableau numpy : {image_np.shape}")
 
 # Fonction : afficher un pixel
-
 def afficher_pixel(image, x, y):
     valeur = image[y, x] # image[y, x]  lit la valeur du pixel
     valeur_binaire = format(valeur, '08b') # transforme la valeur en binaire sur 8 bits
@@ -38,12 +23,9 @@ def afficher_pixel(image, x, y):
     print(f"Binaire : {valeur_binaire}")
     print(f"LSB : {valeur_binaire[-1]}") #récupère le bit le moins significatif
 
-afficher_pixel(image_gris, 100, 50) 
-
-
+afficher_pixel(image_np, 100, 50) #On l’appelle pour voir un pixel
 
 # EXERCICE 3 : Encodage LSB1
-
 
 # Question 3.1 : Texte  binaire
 def texte_vers_binaire(texte):
@@ -55,7 +37,7 @@ def texte_vers_binaire(texte):
 def convertir_pixels_pairs(image):
     image_paire = image.copy()
     image_paire = image_paire & 0xFE #0xFE = 254 (décimal) = 11111110 (binaire) met le dernier bit à 0 et rend la valeur paire
-     #Ça permet d’avoir une base “neutre” pour ensuite mettre à 1 seulement les bits du message.           
+                
     pixels_modifies = np.sum(image != image_paire) # on compare pixel par pixel les deux images ,l'image original et limage paire , Le résultat est un tableau booléen (True / False) / pixels_modifies = le nombre total de pixels qui ont été modifiés pour devenir pairs.
     print(f"\nPixels modifiés : {pixels_modifies} / {image.size}")
     return image_paire
@@ -81,17 +63,12 @@ def encoder_message_lsb1(image, message):
         if bit == '1':
             pixels[index] = pixels[index] | 1 # OR binaire  | 1 : Si le dernier bit est 0 → devient 1 , Si le dernier bit est déjà 1 → reste 1
 
-
-    
     image_encodee = pixels.reshape(image.shape)
     print(" Message encodé ")
     return image_encodee
 
-
-
 # EXERCICE 4 : Décodage LSB1
 #on récupère le dernier bit de chaque pixel pour reconstruire le message binaire.
-
 def decoder_message_lsb1(image):
    
     print("\n  Décodage du message ")
@@ -126,11 +103,15 @@ print("TEST COMPLET : ENCODAGE ET DÉCODAGE")
 print("="*70)
 
 # Encodage
-image_paire = convertir_pixels_pairs(image_gris)
-message_original = "c'est pas un bug c'est un secret :)\n"
+image_paire = convertir_pixels_pairs(image_np)
+message_original = "you just got steganographed :)) !!!"
 image_encodee = encoder_message_lsb1(image_paire, message_original)
-cv2.imwrite("image_encodee.png", image_encodee)
-print("\n Image sauvegardée : image_encodee.png")
+
+# Convertir en PIL pour sauvegarder
+image_encodee_pil = Image.fromarray(image_encodee.astype(np.uint8))
+image_encodee_pil.save("image_encodee_gris_pillow.png")
+image_encodee_pil.show()
+print("\n✓ Image sauvegardée : image_encodee_gris_pillow.png")
 
 # Décodage
 message_decode = decoder_message_lsb1(image_encodee)
@@ -142,22 +123,9 @@ print("COMPARAISON FINALE")
 print("="*70)
 print(f"Message original : '{message_original}'")
 print(f"Message décodé   : '{message_decode}'")
-print(f"Longueur originale : {len(message_original)} caractères")
-print(f"Longueur décodée   : {len(message_decode)} caractères")
 
 if message_original == message_decode:
-    print("\n SUCCÈS ! Les messages sont identiques !")
+    print("\n Les messages sont identiques !")
 else:
-    print("\n ERREUR ! Les messages sont différents !")
+    print("\n erreur Les messages sont différents !")
 
-# Affichage des images et de la différence
-difference = np.abs(image_gris.astype(int) - image_encodee.astype(int))
-difference_affichage = np.clip(difference * 100, 0, 255).astype(np.uint8)
-
-cv2.imshow("Image Originale", image_gris)
-cv2.imshow("Image Encodée", image_encodee)
-cv2.imshow("Différence (x100)", difference_affichage)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-print("\n  EXERCICES 3, 4 ET 5 TERMINÉS ")
